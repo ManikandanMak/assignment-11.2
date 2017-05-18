@@ -1,0 +1,30 @@
+ create table if not exists olympics1(streer string,                                        
+    > city string,                                 
+    > zip int,                                       
+    > state string,                                                                       
+    > beds int,                                       
+    > baths int,
+    > sqft int,
+    > type string,
+    > sale_date string,
+    > price int,
+    > latitude string,
+    > longitude string)
+    > row format delimited 
+    > fields terminated by ',';
+
+create table if not exists no_of_beds(city string,                                                                         
+    > baths int,                                                                                                              
+    > sqft int,                                       
+    > price int,
+    > type string) partitioned by (beds int)
+    > row format delimited 
+    > fields terminated by ',';
+
+
+load data local inpath '/home/acadgild/Downloads/real_state.csv' into table olympics1;
+
+insert overwrite table no_of_beds
+partition(beds)
+select city,baths,sqft,price,type,beds from no_of_beds where beds >=2;
+select * from no_of_beds;
